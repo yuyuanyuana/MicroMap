@@ -5,8 +5,8 @@ MicroMap is a generalizable and cost-effective framework for predicting high-res
 
 To install MicroMap directly from GitHub:
 
-```python
-    pip install git+https://github.com/yuyuanyuana/MicroMap.git
+```
+pip install git+https://github.com/yuyuanyuana/MicroMap.git
 ```
 
 ## 📘 Tutorial
