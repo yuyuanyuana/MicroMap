@@ -473,50 +473,50 @@ class MicroMap(object):
                 extract_mask=True,
                 batch_size=12800): 
     
-    """
-    Predict high-resolution gene expression from image features using the trained model.
+        """
+        Predict high-resolution gene expression from image features using the trained model.
 
-    This function performs token-level prediction by passing the flattened image features 
-    through the model, reconstructing mean expression values and latent representations 
-    for each spatial patch. It can optionally add the corresponding histological image and 
-    extract a mask of relevant patches.
+        This function performs token-level prediction by passing the flattened image features 
+        through the model, reconstructing mean expression values and latent representations 
+        for each spatial patch. It can optionally add the corresponding histological image and 
+        extract a mask of relevant patches.
 
-    Parameters
-    ----------
-    model_path : str or None, optional
-        Path to a pre-trained model to load. If None, the current model instance is used.
-    genes : list of str
-        List of gene names corresponding to the output dimensions of the model.
-    add_img : bool, default False
-        If True, reads the high-resolution image from `img_path` and stores it in AnnData.
-    img_path : str or None
-        Path to the high-resolution histology image. Required if `add_img` is True.
-    index_use : list of int or None, optional
-        Subset of patch indices to use when extracting the mask. If None, the mask is generated automatically.
-    extract_mask : bool, default True
-        If True, returns an AnnData object filtered by the tissue mask, along with the mask indices.
-    batch_size : int, default 12800
-        Number of patches to process per batch during prediction.
-    logvar_scale : float, default 1
-        Scaling factor for the model's log-variance during inference.
+        Parameters
+        ----------
+        model_path : str or None, optional
+            Path to a pre-trained model to load. If None, the current model instance is used.
+        genes : list of str
+            List of gene names corresponding to the output dimensions of the model.
+        add_img : bool, default False
+            If True, reads the high-resolution image from `img_path` and stores it in AnnData.
+        img_path : str or None
+            Path to the high-resolution histology image. Required if `add_img` is True.
+        index_use : list of int or None, optional
+            Subset of patch indices to use when extracting the mask. If None, the mask is generated automatically.
+        extract_mask : bool, default True
+            If True, returns an AnnData object filtered by the tissue mask, along with the mask indices.
+        batch_size : int, default 12800
+            Number of patches to process per batch during prediction.
+        logvar_scale : float, default 1
+            Scaling factor for the model's log-variance during inference.
 
-    Returns
-    -------
-    adata_hir : AnnData
-        Full-resolution predicted gene expression with spatial coordinates and latent embeddings.
-    adata_mask : AnnData, optional
-        Masked subset of `adata_hir` corresponding to tissue regions. Returned if `extract_mask=True`.
-    index_use : list of int, optional
-        Indices of the patches used in the masked AnnData. Returned if `extract_mask=True`.
+        Returns
+        -------
+        adata_hir : AnnData
+            Full-resolution predicted gene expression with spatial coordinates and latent embeddings.
+        adata_mask : AnnData, optional
+            Masked subset of `adata_hir` corresponding to tissue regions. Returned if `extract_mask=True`.
+        index_use : list of int, optional
+            Indices of the patches used in the masked AnnData. Returned if `extract_mask=True`.
 
-    Notes
-    -----
-    - The function flattens the feature map and processes it in batches for memory efficiency.
-    - Latent representations (`latent`) are stored in `adata_hir.obsm['latent']`.
-    - Spatial coordinates are adjusted based on the model scale.
-    - The optional image is stored in `adata_hir.uns['spatial']['fullres']['images']['hires']`.
-    
-    """
+        Notes
+        -----
+        - The function flattens the feature map and processes it in batches for memory efficiency.
+        - Latent representations (`latent`) are stored in `adata_hir.obsm['latent']`.
+        - Spatial coordinates are adjusted based on the model scale.
+        - The optional image is stored in `adata_hir.uns['spatial']['fullres']['images']['hires']`.
+        
+        """
 
         self.patch_shape = (self.feats.shape[0], self.feats.shape[1])
         
