@@ -302,7 +302,7 @@ class MicroMap(object):
                                  n_batch = 1
                                  ).to(self.device)  
         
-        ptimizer = torch.optim.Adam(self.model.parameters(), lr=1e-2)
+        optimizer = torch.optim.Adam(self.model.parameters(), lr=1e-2)
         
         if model_prior_path is not None:
             self.prior_net = torch.load(model_prior_path).to(self.device)
