@@ -13,15 +13,25 @@ MicroMap is a deep generative framework for predicting high-resolution spatial t
 - **Hardware:** GPU recommended for training (tested on NVIDIA A800 80GB PCIe, Driver 550.144.03, CUDA 12.4)
 
 ### Install from GitHub
-To install MicroMap directly from GitHub:
+First, install the dependencies:
 
+```bash
+pip install -r requirements.txt
 ```
-pip install git+https://github.com/yuyuanyuana/MicroMap.git
+
+Then, install MicroMap directly from GitHub (this should only take a few seconds):
+
+```bash
+https://github.com/yuyuanyuana/MicroMap/releases/download/v1.0.0/MicroMap-1.0.0-py3-none-any.whl
 ```
 
 ## 📘 Tutorial
 
 Coming soon.
+
+
+## License
+MicroMap 1.0.0 is released under the MIT License. See the LICENSE file for details.
 
 
 
