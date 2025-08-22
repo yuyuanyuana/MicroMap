@@ -280,7 +280,8 @@ class MicroMap(object):
         self.patch_shape = (self.feats.shape[0], self.feats.shape[1])
         self.spot_count = spot_count
         
-        if self.spot_pca is None:
+        if not hasattr(self, "spot_pca") or self.spot_pca is None:
+
             self.spot_pca = prepare_spot_pca(self.spot_count, n_pca=n_pca)
         
         dataset = SpotTokenDataset( self.feats, 
@@ -446,8 +447,8 @@ class MicroMap(object):
             
             print(f"Epoch {epoch}: total={loss_tmp/len(dataloader):.4f}, nb={loss_nb_all/len(dataloader):.4f}, size={loss_size_all/len(dataloader):.4f}, "
                   f"smooth={loss_smooth_all/len(dataloader):.4f}, "
-                  f"cos_gene={loss_cos_gene_all/len(dataloader):.4f}, cos_cell={loss_cos_cell_all/len(dataloader):.4f}, kl_token={loss_kl_token_all/len(dataloader):.4f}, "
-                  f"kl_prior={loss_kl_prior_all/len(dataloader):.4f}, prior_recon={loss_prior_recon_all/len(dataloader):.4f}")
+                  f"cos_gene={loss_cos_gene_all/len(dataloader):.4f}, cos_cell={loss_cos_cell_all/len(dataloader):.4f}, kl_token={loss_kl_token_all/len(dataloader):.4f}")
+                  # f"kl_prior={loss_kl_prior_all/len(dataloader):.4f}, prior_recon={loss_prior_recon_all/len(dataloader):.4f}")
             # # === 每隔 20 个 epoch 画图并保存 ===
             # if (epoch != 0) & (epoch % 20 == 0):
             #     plt.figure(figsize=(10, 6))

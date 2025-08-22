@@ -163,6 +163,7 @@ def KL_loss_size(size_sum_tmp, size_tmp):
     def normalize_size(vector):
         return vector / vector.sum()
     P = normalize_size(size_sum_tmp)
+    Q = normalize_size(size_tmp)
     return F.kl_div(Q.log(), P, reduction='batchmean')
 
 
