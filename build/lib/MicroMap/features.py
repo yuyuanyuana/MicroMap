@@ -19,49 +19,66 @@ transform = transforms.Compose([ transforms.ToTensor(),
 
 
 def pad_img(image, patch_size=224):
+    
     shape_ori = np.array(image.shape[:2])
     shape_ext = ( ((shape_ori + patch_size - 1) // patch_size)*patch_size )
+    
     image = np.pad( image,
                     ((0, shape_ext[0] - image.shape[0]),
                     (0, shape_ext[1] - image.shape[1]),
                     (0, 0)),
                 mode='edge')
+    
     return image
 
 
 def batch_transform(image, batch_h=3, batch_w=3):
+    
     h, w, c = image.shape
     block_height = int(np.ceil( h / batch_h))  
     block_width = int(np.ceil( w / batch_w )) 
     starts_h = list(range(0, h, block_height))
     starts_w = list(range(0, w, block_width))
     blocks = [[] for _ in range(len(starts_h))]
+    
     for i in range(len(starts_h)):
+        
         for j in range(len(starts_w)):
+            
             start_h = starts_h[i]
             start_w = starts_w[j]
+            
             end_h = start_h + block_height
             end_w = start_w + block_width
+            
             block = image[start_h:end_h, start_w:end_w, :]
             block = transform(block/255)
             blocks[i].append(block)
+    
     blocks_r = [torch.concat(block_, 2) for block_ in blocks]
     out = torch.concat(blocks_r, 1)
+    
     return out
 
 
 def split_patches(image, patch_size=224):
+    
     height, width, channels = image.shape
     num_patches_height = height // patch_size
     num_patches_width = width // patch_size
+    
     patches = image.reshape(num_patches_height, patch_size, num_patches_width, patch_size, channels)
     patches = patches.swapaxes(1, 2).reshape(-1, patch_size, patch_size, channels)
+    
     patches_tensor = torch.from_numpy(patches).permute(0, 3, 1, 2) 
+    
     return patches_tensor.float(), image, num_patches_height, num_patches_width
 
 
 def load_image(filename, verbose=True):
+    
     img = Image.open(filename)
+    
     return np.array(img)
 
 
@@ -75,6 +92,7 @@ def UNI_feature(model_path = '.',
                 img_path = '.',
                 out_path = '.',
                 device = 'cuda:1'):
+    
     img = load_image(img_path)
     img = rescale(img, [scale, scale, 1], preserve_range=True)
     # print('Image shape before padding: ', img.shape)
@@ -86,7 +104,7 @@ def UNI_feature(model_path = '.',
     # all_numbers = re.findall(r'\d+', model_weight_name)
     # patch_size = int(all_numbers[-1])
     # token_size = int(all_numbers[-2])
-    print('Creating and loding model ... ')
+    print('Creating and loading model ... ')
     if not UNI2:
         model = timm.create_model(
             "vit_large_patch16_224", img_size=224, patch_size=16, init_values=1e-5, num_classes=0, dynamic_img_size=True
@@ -171,47 +189,3 @@ def UNI_feature(model_path = '.',
 
 
 
-# import timm
-# from timm.data import resolve_data_config
-# from timm.data.transforms_factory import create_transform
-# from huggingface_hub import login
-
-# login()  # login with your User Access Token, found at https://huggingface.co/settings/tokens
-
-# # pretrained=True needed to load UNI2-h weights (and download weights for the first time)
-# timm_kwargs = {
-#             'img_size': 224, 
-#             'patch_size': 14, 
-#             'depth': 24,
-#             'num_heads': 24,
-#             'init_values': 1e-5, 
-#             'embed_dim': 1536,
-#             'mlp_ratio': 2.66667*2,
-#             'num_classes': 0, 
-#             'no_embed_class': True,
-#             'mlp_layer': timm.layers.SwiGLUPacked, 
-#             'act_layer': torch.nn.SiLU, 
-#             'reg_tokens': 8, 
-#             'dynamic_img_size': True
-#         }
-# model = timm.create_model("hf-hub:MahmoodLab/UNI2-h", pretrained=True, **timm_kwargs)
-
-
-# import os
-# os.environ["HF_ENDPOINT"] = "https://hf-mirror.com"
-# timm_kwargs = {
-#             'img_size': 224, 
-#             'patch_size': 14, 
-#             'depth': 24,
-#             'num_heads': 24,
-#             'init_values': 1e-5, 
-#             'embed_dim': 1536,
-#             'mlp_ratio': 2.66667*2,
-#             'num_classes': 0, 
-#             'no_embed_class': True,
-#             'mlp_layer': timm.layers.SwiGLUPacked, 
-#             'act_layer': torch.nn.SiLU, 
-#             'reg_tokens': 8, 
-#             'dynamic_img_size': True
-#         }
-# model = timm.create_model("hf-hub:MahmoodLab/UNI2-h", pretrained=True, **timm_kwargs)
