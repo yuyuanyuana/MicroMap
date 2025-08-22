@@ -27,7 +27,7 @@ https://github.com/yuyuanyuana/MicroMap/releases/download/v1.0.0/MicroMap-1.0.0-
 
 ## 📘 Tutorial
 
-Coming soon.
+For a detailed usage example, please see the [tutorial notebook](tutorial.ipynb).
 
 
 ## License
