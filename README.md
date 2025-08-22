@@ -30,5 +30,9 @@ https://github.com/yuyuanyuana/MicroMap/releases/download/v1.0.0/MicroMap-1.0.0-
 Coming soon.
 
 
+## License
+MicroMap 1.0.0 is released under the MIT License. See the LICENSE file for details.
+
+
 
 
