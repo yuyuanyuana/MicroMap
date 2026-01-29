@@ -91,7 +91,8 @@ def UNI_feature(model_path = '.',
                 batch_size = 2560, 
                 img_path = '.',
                 out_path = '.',
-                device = 'cuda:1'):
+                device = 'cuda:1',
+                return_result = True):
     
     img = load_image(img_path)
     img = rescale(img, [scale, scale, 1], preserve_range=True)
@@ -177,15 +178,22 @@ def UNI_feature(model_path = '.',
     features_shift_token = features_shift_token / (int(np.ceil(patch_size / stride)) ** 2)
     features_shift_patch = features_shift_patch / (int(np.ceil(patch_size / stride)) ** 2)
     embs = dict(patch=features_shift_patch, token=features_shift_token)
-    embs['rgb'] = torch.from_numpy(np.stack([
+    rgb = torch.from_numpy(np.stack([
             reduce(
                 img[..., i].astype(np.float16) / 255.0,
                 '(h1 h) (w1 w) -> h1 w1', 'mean',
                 h=token_size, w=token_size).astype(np.float32)
-            for i in range(3)]).transpose(1,2,0))
+            for i in range(3)]).transpose(1,2,0))   
+    feat = torch.cat(
+        [features_shift_patch, features_shift_token, rgb],
+        dim=2
+    )
     print('Saving features ...')
-    with open(f'{out_path}/features.pickle', 'wb') as file:
-        pickle.dump(embs, file)
-
+    os.makedirs(out_path, exist_ok=True)
+    save_path = f"{out_path}/features.pt"
+    torch.save(feat, save_path)
+    print("Saved to:", save_path)
+    if return_result:
+        return feat
 
 

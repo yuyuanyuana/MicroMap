@@ -124,28 +124,16 @@ class MicroMap(object):
             self.loss_history_prior['kl'].append(loss_kl * lambda_kl/len(prior_loader))
             
             print(f"[Pretrain Epoch {epoch}] total loss = {loss_total:.4f}")
-            # # === 每隔 20 个 epoch 画图并保存 ===
-            # if (epoch != 0) & (epoch % 20 == 0):
-            #     plt.figure(figsize=(10, 6))
-            #     for key in self.loss_history_prior:
-            #         plt.plot(self.loss_history_prior[key], label=key)
-            #     plt.xlabel("Epoch")
-            #     plt.ylabel("Loss")
-            #     plt.title(f"Loss at Epoch {epoch}")
-            #     plt.legend()
-            #     plt.tight_layout()
-            #     plt.savefig(f"loss_prior.png")
-            #     plt.close()
-            # loss_pre.append(loss_total)
-        # torch.save(self.prior_net, f'{self.out_path}/model_prior_net.pt')
-    
+
     
     def cal_token_feats( self, 
                          UNI_path = '/data/yyyu/test/UNI/code_raw/assets/ckpts/vit_large_patch16_224.dinov2.uni_mass100k/pytorch_model.bin', 
                          img_path = None,
                          scale = 1.0,  
                          patch_size = 224,
-                         token_size = 16
+                         token_size = 16,
+                         save_path = None,
+                         return_result=True
                          ):
         
         """
@@ -164,34 +152,28 @@ class MicroMap(object):
         """
 
         self.scale = scale
-        
-        UNI_feature( model_path = UNI_path,
-                     img_path = img_path,
-                     scale = scale,
-                     patch_size = 224,
-                     token_size = 16,
-                     stride = 48,
-                     out_path = self.out_path,
-                     device = self.device)
-        
-        file = open(self.out_path + '/features.pickle','rb')
-        
-        feats = pickle.load(file)
-        
-        self.feats = torch.concat([feats['patch'], feats['token'], feats['rgb']], 2)
-    
 
-    def load_token_feats( self, feats_file=None, feats_value=None, scale=1):
+        if save_path is None:
+            save_path = self.out_path
+        
+        self.feats = UNI_feature(    model_path = UNI_path,
+                                     img_path = img_path,
+                                     scale = scale,
+                                     patch_size = 224,
+                                     token_size = 16,
+                                     stride = 48,
+                                     out_path = save_path,
+                                     device = self.device,
+                                     return_result = return_result)
+        
+
+    def load_token_feats( self, feats_file=None, scale=1):
 
         """
         Load pre-computed token-level image features, either from a file or from memory.
 
         Args:
             feats_file (str, optional): Path to a pickle file containing features.
-                                        The file should store a dict with keys:
-                                        ['patch', 'token', 'rgb'].
-            feats_value (torch.Tensor, optional): Directly provide a feature tensor 
-                                                  (e.g. pre-loaded or pre-processed).
             scale (float): Down-sampling ratio of the corresponding image. 
                            Must match the scale used during feature extraction.
 
@@ -204,13 +186,8 @@ class MicroMap(object):
         
         if feats_file is not None:
             
-            feats = pickle.load(open(feats_file,'rb'))
-            self.feats = torch.concat([feats['patch'], feats['token'], feats['rgb']], 2)
-        
-        else:
-            
-            self.feats = feats_value
-
+            self.feats = torch.load(feats_file) 
+            assert self.feats.ndim == 3
 
     def train( self,         
                spot_count,
@@ -219,18 +196,18 @@ class MicroMap(object):
                genes, 
                hidden_dim = 256, 
                latent_dim = 64,
-               dropout = 0.5,
-               logvar_scale=0.1, 
+               dropout = 0.3,
+               logvar_scale=1, 
                batch_size = 128, 
-               freeze_prior_epochs = 210, 
+               freeze_prior_epochs = 310, 
                lambda_nb = 1, 
-               lambda_smooth = 0.01, 
-               lambda_kl = 0.001, 
-               lambda_kl_prior = 0.0001, 
-               lambda_prior_recon = 0.01, 
+               lambda_smooth = 0.2, 
+               lambda_kl = 0.2, 
+               lambda_kl_prior = 0.01, 
+               lambda_prior_recon = 1, 
                warmup_epochs = 800, 
-               train_epochs = 200,
-               weight_smooth_epoch = 100, 
+               train_epochs = 300,
+               weight_smooth_epoch = 310, 
                model_prior_path=None,
                n_pca=100,
                neighbor_type='8'
@@ -449,21 +426,6 @@ class MicroMap(object):
                   f"smooth={loss_smooth_all/len(dataloader):.4f}, "
                   f"cos_gene={loss_cos_gene_all/len(dataloader):.4f}, cos_cell={loss_cos_cell_all/len(dataloader):.4f}, kl_token={loss_kl_token_all/len(dataloader):.4f}")
                   # f"kl_prior={loss_kl_prior_all/len(dataloader):.4f}, prior_recon={loss_prior_recon_all/len(dataloader):.4f}")
-            # # === 每隔 20 个 epoch 画图并保存 ===
-            # if (epoch != 0) & (epoch % 20 == 0):
-            #     plt.figure(figsize=(10, 6))
-            #     for key in self.loss_history:
-            #         plt.plot(self.loss_history[key], label=key)
-            #     plt.xlabel("Epoch")
-            #     plt.ylabel("Loss")
-            #     plt.title(f"Loss at Epoch {epoch}")
-            #     plt.legend()
-            #     plt.tight_layout()
-            #     plt.savefig(f"loss.png")
-            #     plt.close()
-            # if (epoch != 0) & (epoch % 50 == 0):
-            #     torch.save(self.model, f'{self.out_path}/model_{epoch}.pt')
-
 
     def predict(self, 
                 model_path = None, 

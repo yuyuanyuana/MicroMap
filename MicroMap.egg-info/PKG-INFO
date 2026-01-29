@@ -1,10 +1,7 @@
-Metadata-Version: 1.0
+Metadata-Version: 2.1
 Name: MicroMap
 Version: 1.0.0
 Summary: A Cost-Effective and Generalizable Framework for High-Resolution Spatial Transcriptomics from Histological Images
-Home-page: UNKNOWN
 Author: yuanyuanyu
-Author-email: UNKNOWN
 License: MIT
-Description: UNKNOWN
-Platform: UNKNOWN
+License-File: LICENSE.txt

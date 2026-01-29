@@ -1,6 +1,8 @@
+LICENSE.txt
 README.md
 setup.py
 MicroMap/__init__.py
+MicroMap/evaluate.py
 MicroMap/features.py
 MicroMap/micromap.py
 MicroMap/model.py

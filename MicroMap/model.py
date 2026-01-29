@@ -11,18 +11,21 @@ import numpy as np
 
 exp_act = lambda x: torch.exp(x)
 
-def acti_fun(activate):
-    if activate == 'relu':
+def acti_fun(name):
+    if name == "relu":
         return F.relu
-    elif activate == 'sigmoid':
-        return torch.sigmoid
-    elif activate == 'exp':
-        return exp_act
-    elif activate == 'softplus':
+    elif name == "leakyrelu":
+        return F.leaky_relu
+    elif name == "silu" or name == "swish":
+        return F.silu
+    elif name == "tanh":
+        return torch.tanh
+    elif name == "softplus":
         return F.softplus
-    elif activate =='tanh':
-        return F.tanh
-
+    elif name == "gelu":
+        return F.gelu
+    elif name == 'exp':
+        return exp_act
 
 
 # ============================================================================ #
@@ -122,18 +125,15 @@ class SpotPriorNet(nn.Module):
 class Token2Expr(nn.Module):
     def __init__(self, input_dim, hidden_dim, latent_dim, output_dim, n_batch=1, dropout=0.2):
         super(Token2Expr, self).__init__()
-        self.layer1 = FC_Layer(input_dim, hidden_dim, bn='bn', activate='relu', dropout=dropout)
-        self.layer2 = FC_Layer(hidden_dim, latent_dim, bn='bn', activate='relu', dropout=dropout)
+        self.layer1 = FC_Layer(input_dim, hidden_dim, bn='bn', activate='gelu', dropout=dropout)
+        self.layer2 = FC_Layer(hidden_dim, latent_dim, bn='bn', activate='gelu', dropout=dropout)
         self.fc_mu = nn.Linear(latent_dim, latent_dim)
         self.fc_log_var = nn.Linear(latent_dim, latent_dim)
-        # self.layer3 = FC_Layer(latent_dim, hidden_dim, bn='bn', activate='relu', dropout=0)
-        # self.layer4 = FC_Layer(hidden_dim, output_dim, bn='bn', activate='exp', dropout=0)
         self.layer3 = FC_Layer(latent_dim, hidden_dim, bn='DSB', nbatch=n_batch, activate='relu')
         self.layer4 = FC_Layer(hidden_dim, output_dim, bn='DSB', nbatch=n_batch, activate='exp')
         self.logits = torch.nn.Parameter(torch.randn(n_batch, output_dim))
-        # self.max_samples = 12800
-        self.size0 = FC_Layer(input_dim, hidden_dim, bn='bn', activate='relu', dropout=0)
-        self.size1 = FC_Layer(hidden_dim, 1, activate='exp', dropout=0)
+        self.size0 = FC_Layer(input_dim, hidden_dim, bn='bn', activate='gelu', dropout=0)
+        self.size1 = FC_Layer(hidden_dim, 1, activate='softplus', dropout=0)
         # self.size = torch.nn.Parameter(torch.randn(self.max_samples))
     def reparameterize(self, mu, log_var, logvar_scale=1):
         # logvar_scale < 1.0 reduces variance: logvar + log(scale) = log(var * scale)
@@ -141,13 +141,11 @@ class Token2Expr(nn.Module):
         std = torch.exp(0.5 * scaled_log_var)
         eps = torch.randn_like(std)
         return mu + eps * std
-    def forward(self, x, batch_tensor=None, logvar_scale=1, n_samples=10, infer_mode=False): 
+    def forward(self, x, batch_tensor=None, logvar_scale=1, n_samples=1, infer_mode=False): 
         x1 = self.layer1(x)
         x2 = self.layer2(x1)
         mu = self.fc_mu(x2)
         log_var = self.fc_log_var(x2)
-        # z = self.reparameterize(mu, log_var, logvar_scale=logvar_scale)
-        # rate_scaled = self.layer4(self.layer3(z, batch_tensor), batch_tensor)
         if infer_mode:
             z = mu
             rate_scaled= self.layer4(self.layer3(z, batch_tensor), batch_tensor)
