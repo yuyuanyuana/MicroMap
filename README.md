@@ -38,11 +38,8 @@ MicroMap is benchmarked against four state-of-the-art high-resolution prediction
 - TESLA: https://github.com/jianhuupenn/TESLA
 - MISO: https://github.com/owkin/miso_code
 
-For iStar and XFuse, we use the default training and inference settings provided by the official implementations.
-To enable dense whole-slide prediction rather than region-limited spot-level prediction, we make minor modifications to the inference pipelines of TESLA and MISO while keeping their training configurations unchanged.
-The modified evaluation scripts are available at:
+For MISO and TESLA, to enable high-resolution predictions covering the entire tissue section (rather than being restricted to local regions around spots in the original implementations), we made minor modifications to the inference stage only, while keeping the training procedures and default hyperparameters unchanged. The modified evaluation scripts are available at:
 https://github.com/ToryDeng/MicroMap-analysis
-
 
 ## 📄 License
 MicroMap 1.0.0 is released under the MIT License. See the LICENSE file for details.
