@@ -118,8 +118,8 @@ def ssim_spatial_all(pred, gt, genes_use, index_gt, patch_shape,
     else:
         A = np.asarray(pred); B = np.asarray(gt)
         gene_index = list(genes_use)
-    print("A NaN:", np.isnan(A).any(), "A Inf:", np.isinf(A).any())
-    print("B NaN:", np.isnan(B).any(), "B Inf:", np.isinf(B).any())
+    # print("A NaN:", np.isnan(A).any(), "A Inf:", np.isinf(A).any())
+    # print("B NaN:", np.isnan(B).any(), "B Inf:", np.isinf(B).any())
     def _chunk(genes_slice):
         data1 = np.zeros((H, W), dtype=np.float32)
         data2 = np.zeros((H, W), dtype=np.float32)
@@ -175,7 +175,7 @@ def evaluation_func(pred_mm, gt_mm, genes_use,
                                        chunk_size=ssim_kwargs.get("chunk_size", 256),
                                        gaussian_weights=ssim_kwargs.get("gaussian_weights", True))
         res["SSIM"] = ssim_series.astype(np.float32)
-    print(res.mean(numeric_only=True))
+    # print(res.mean(numeric_only=True))
     return res
 
 

@@ -1,8 +1,7 @@
 # 🧬 MicroMap: High-Resolution Spatial Transcriptomics from H&E-stained histological images
 
 ## 📖 Overview
-MicroMap is a deep generative framework for predicting high-resolution spatial transcriptomic (ST) profiles directly from H&E-stained histological images. By integrating pathology foundation models with deep generative modeling, MicroMap enables accurate gene expression prediction that preserves spatial patterns and supports reliable downstream analyses such as cell type annotation, malignant region detection, and cell–cell communication inference. It offers a scalable alternative to expensive ST experiments, making spatially resolved molecular analysis more accessible for both research and clinical applications.
-
+MicroMap is a deep generative framework for predicting high-resolution spatial transcriptomic (ST) profiles directly from H&E-stained histological images. By leveraging an spot level expression guided deep generative model, MicroMap enables accurate in-sample resolution enhancement and direct out-of-sample high-resolution gene expression prediction from H&E image only. Overall, MicroMap improves effective spatial resolution and prediction, offering a practical, affordable solution for spatial molecular analysis.
 
 ## 🚀 Installation
 
@@ -27,7 +26,18 @@ https://github.com/yuyuanyuana/MicroMap/releases/download/v1.0.0/MicroMap-1.0.0-
 
 ## 📘 Tutorial
 
-For a detailed usage example, please see the [tutorial notebook](tutorial.ipynb).
+For detailed usage examples, please refer to the in-sample tutorial notebook [`tutorial.ipynb`](tutorial_in_sample.ipynb) and the out-of-sample tutorial notebook [`tutorial_out_of_sample.ipynb`](tutorial_out_of_sample.ipynb), which demonstrate the complete workflow, including data download and loading, model training and prediction, and quantitative evaluation.
+
+## 📊 Benchmarking 
+MicroMap is benchmarked against four state-of-the-art high-resolution prediction methods: iStar, XFuse, TESLA, and MISO.
+iStar: https://github.com/daviddaiweizhang/istar
+XFuse: https://github.com/ludvb/xfuse
+TESLA: https://github.com/jianhuupenn/TESLA
+MISO: https://github.com/owkin/miso_code
+For iStar and XFuse, we use the default training and inference settings provided by the official implementations.
+To enable dense whole-slide prediction rather than region-limited spot-level prediction, we make minor modifications to the inference pipelines of TESLA and MISO while keeping their training configurations unchanged.
+The modified evaluation scripts are available at:
+https://github.com/ToryDeng/MicroMap-analysis
 
 
 ## 📄 License
@@ -35,4 +45,5 @@ MicroMap 1.0.0 is released under the MIT License. See the LICENSE file for detai
 
 
 ## 📑 Citation
+coming soon.
 
