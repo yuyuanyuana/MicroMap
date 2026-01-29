@@ -38,7 +38,7 @@ MicroMap is benchmarked against four state-of-the-art high-resolution prediction
 - TESLA: https://github.com/jianhuupenn/TESLA
 - MISO: https://github.com/owkin/miso_code
 
-For MISO and TESLA, to enable high-resolution predictions covering the entire tissue section (rather than being restricted to local regions around spots in the original implementations), we made minor modifications to the inference stage only, while keeping the training procedures and default hyperparameters unchanged. The modified evaluation scripts are available at:
+For MISO and TESLA, to enable high-resolution predictions covering the entire tissue section (rather than being restricted to tokens around spots in the original implementations), we made minor modifications to the inference stage only, while keeping the training procedures and default hyperparameters unchanged. The modified evaluation scripts are available at:
 https://github.com/ToryDeng/MicroMap-analysis
 
 ## 📄 License
