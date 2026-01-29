@@ -28,6 +28,7 @@ https://github.com/yuyuanyuana/MicroMap/releases/download/v1.0.0/MicroMap-1.0.0-
 For detailed usage examples, please refer to the in-sample tutorial notebook and the out-of-sample tutorial notebook , 
 - [`in_sample`](tutorial_in_sample.ipynb)
 - [`out-of-sample`](tutorial_out_of_sample.ipynb)
+
 which demonstrate the complete workflow, including data download and loading, model training and prediction, and quantitative evaluation.
 
 ## 📊 Benchmarking 
@@ -36,6 +37,7 @@ MicroMap is benchmarked against four state-of-the-art high-resolution prediction
 - XFuse: https://github.com/ludvb/xfuse
 - TESLA: https://github.com/jianhuupenn/TESLA
 - MISO: https://github.com/owkin/miso_code
+
 For iStar and XFuse, we use the default training and inference settings provided by the official implementations.
 To enable dense whole-slide prediction rather than region-limited spot-level prediction, we make minor modifications to the inference pipelines of TESLA and MISO while keeping their training configurations unchanged.
 The modified evaluation scripts are available at:
