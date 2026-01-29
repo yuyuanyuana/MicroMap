@@ -21,7 +21,7 @@ pip install -r requirements.txt
 Then, install MicroMap directly from GitHub (this should only take a few seconds):
 
 ```bash
-https://github.com/yuyuanyuana/MicroMap/releases/download/v1.0.0/MicroMap-1.0.0-py3-none-any.whl
+pip install https://github.com/yuyuanyuana/MicroMap/releases/download/v1.0.0/micromap-1.0.0-py3-none-any.whl
 ```
 
 ## 📘 Tutorial
