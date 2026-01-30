@@ -5,7 +5,9 @@ MicroMap/__init__.py
 MicroMap/evaluate.py
 MicroMap/features.py
 MicroMap/micromap.py
+MicroMap/micromap_cp.py
 MicroMap/model.py
+MicroMap/model_cp.py
 MicroMap/utils.py
 MicroMap.egg-info/PKG-INFO
 MicroMap.egg-info/SOURCES.txt
