@@ -128,23 +128,14 @@ class Token2Expr(nn.Module):
         super(Token2Expr, self).__init__()
         self.layer1 = FC_Layer(input_dim, hidden_dim, bn='bn', activate='gelu', dropout=dropout)
         self.layer2 = FC_Layer(hidden_dim, latent_dim, bn='bn', activate='gelu', dropout=dropout)
-        # self.layer1 = FC_Layer(input_dim, hidden_dim, bn='bn', activate='gelu', dropout=dropout)
-        # self.layer2 = FC_Layer(hidden_dim, latent_dim, bn='bn', activate='gelu', dropout=dropout)
         self.fc_mu = nn.Linear(latent_dim, latent_dim)
         self.fc_log_var = nn.Linear(latent_dim, latent_dim)
-        # self.layer3 = FC_Layer(latent_dim, hidden_dim, bn='bn', activate='relu', dropout=0)
-        # self.layer4 = FC_Layer(hidden_dim, output_dim, bn='bn', activate='exp', dropout=0)
-        # self.layer3 = FC_Layer(latent_dim, hidden_dim, bn='DSB', nbatch=n_batch, activate='gelu')
-        # self.layer4 = FC_Layer(hidden_dim, output_dim, bn='DSB', nbatch=n_batch, activate='exp')
         self.layer3 = FC_Layer(latent_dim, hidden_dim, nbatch=n_batch, activate='relu')
         self.layer4 = FC_Layer(hidden_dim, output_dim, nbatch=n_batch, activate='exp')
         self.logits = torch.nn.Parameter(torch.randn(n_batch, output_dim))
-        # self.max_samples = 12800
         self.size0 = FC_Layer(input_dim, hidden_dim, bn='bn', activate='gelu', dropout=0)
         self.size1 = FC_Layer(hidden_dim, 1, activate='softplus', dropout=0)
-        # self.size = torch.nn.Parameter(torch.randn(self.max_samples))
     def reparameterize(self, mu, log_var, logvar_scale=1):
-        # logvar_scale < 1.0 reduces variance: logvar + log(scale) = log(var * scale)
         scaled_log_var = log_var + torch.log(torch.tensor(logvar_scale, device=log_var.device))
         std = torch.exp(0.5 * scaled_log_var)
         eps = torch.randn_like(std)
@@ -154,14 +145,10 @@ class Token2Expr(nn.Module):
         x2 = self.layer2(x1)
         mu = self.fc_mu(x2)
         log_var = self.fc_log_var(x2)
-        # z = self.reparameterize(mu, log_var, logvar_scale=logvar_scale)
-        # rate_scaled = self.layer4(self.layer3(z, batch_tensor), batch_tensor)
         if infer_mode:
             z = mu
             rate_scaled= self.layer4(self.layer3(z, batch_tensor), batch_tensor)
         else:
-            # z_samples = [self.reparameterize(mu, log_var, logvar_scale) for _ in range(n_samples)]
-            # z = torch.stack(z_samples, dim=0).mean(dim=0)
             rate_list = []
             z_list = []
             for _ in range(n_samples):
@@ -171,10 +158,9 @@ class Token2Expr(nn.Module):
                 rate_list.append(rate)
             rate_scaled = torch.stack(rate_list, dim=0).mean(dim=0)  # [n_samples, B, G] -> [B, G]
             z = torch.stack(z_list, dim=0).mean(dim=0)          # Optional: mean z for analysis
-        # rate_scaled= self.layer4(self.layer3(z, batch_tensor), batch_tensor)
         x_size0 = self.size0(x)
         size = self.size1(x_size0)
-        # batch_size = x.size(0)  # 获取当前输入的样本数目
+        # batch_size = x.size(0)  
         # if batch_size > self.max_samples:
         #     raise ValueError("Batch size exceeds the maximum allowed samples")
         # size = self.size[:batch_size]
