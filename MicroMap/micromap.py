@@ -129,7 +129,8 @@ class MicroMap(object):
                          scale = 0.5, 
                          patch_size = 224,
                          token_size = 16,
-                         return_result=True
+                         return_result = True,
+                         save_path = None
                          ):
         
         """
