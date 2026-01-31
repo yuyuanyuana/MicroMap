@@ -204,7 +204,7 @@ class MicroMap(object):
                lambda_kl_prior = 0.01, 
                lambda_prior_recon = 1.0, 
                warmup_epochs = 800, 
-               train_epochs = 200,
+               train_epochs = 300,
                weight_smooth_epoch = 310, 
                model_prior_path=None,
                n_pca=100,
